@@ -1,0 +1,81 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lunitor.Notification.Web", "src\Lunitor.Notification.Web\Lunitor.Notification.Web.csproj", "{10571BBC-4BA9-4822-925A-2AB5085E2D0F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9213046E-BC69-429C-8B8E-82FC5603A4E4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{07B4F7E6-9CA2-4F69-9858-63471BD64B3D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lunitor.Notification.Web.UnitTests", "tests\Lunitor.Notification.Web.UnitTests\Lunitor.Notification.Web.UnitTests.csproj", "{9A9D8A46-C99D-4497-88C6-1666B3A31C1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lunitor.Notification.Core", "src\Lunitor.Notification.Core\Lunitor.Notification.Core.csproj", "{18451558-C1FC-4ADB-BD74-D29E0F35A20B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lunitor.Notification.Core.UnitTests", "tests\Lunitor.Notification.Core.UnitTests\Lunitor.Notification.Core.UnitTests.csproj", "{F754F468-D0E4-4768-8631-A8E38AC77AC4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lunitor.Notification.Infrastructure", "src\Lunitor.Notification.Infrastructure\Lunitor.Notification.Infrastructure.csproj", "{44DDA941-31F0-4ACA-BB68-9788E922040B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lunitor.Notification.Infrastructure.UnitTests", "tests\Lunitor.Notification.Infrastructure.UnitTests\Lunitor.Notification.Infrastructure.UnitTests.csproj", "{57EA6F68-FF7D-4B67-9AB3-7BA8FFA6AA38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lunitor.Notification.Shared", "src\Lunitor.Notification.Shared\Lunitor.Notification.Shared.csproj", "{75D68E77-8D18-40DC-9196-32E5D0F22278}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lunitor.Notification.Shared.UnitTests", "tests\Lunitor.Notification.Shared.UnitTests\Lunitor.Notification.Shared.UnitTests.csproj", "{B20FF2FD-1714-4A31-800C-08342D769828}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{10571BBC-4BA9-4822-925A-2AB5085E2D0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10571BBC-4BA9-4822-925A-2AB5085E2D0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10571BBC-4BA9-4822-925A-2AB5085E2D0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10571BBC-4BA9-4822-925A-2AB5085E2D0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A9D8A46-C99D-4497-88C6-1666B3A31C1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A9D8A46-C99D-4497-88C6-1666B3A31C1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A9D8A46-C99D-4497-88C6-1666B3A31C1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A9D8A46-C99D-4497-88C6-1666B3A31C1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18451558-C1FC-4ADB-BD74-D29E0F35A20B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18451558-C1FC-4ADB-BD74-D29E0F35A20B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18451558-C1FC-4ADB-BD74-D29E0F35A20B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18451558-C1FC-4ADB-BD74-D29E0F35A20B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F754F468-D0E4-4768-8631-A8E38AC77AC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F754F468-D0E4-4768-8631-A8E38AC77AC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F754F468-D0E4-4768-8631-A8E38AC77AC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F754F468-D0E4-4768-8631-A8E38AC77AC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44DDA941-31F0-4ACA-BB68-9788E922040B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44DDA941-31F0-4ACA-BB68-9788E922040B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44DDA941-31F0-4ACA-BB68-9788E922040B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44DDA941-31F0-4ACA-BB68-9788E922040B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57EA6F68-FF7D-4B67-9AB3-7BA8FFA6AA38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57EA6F68-FF7D-4B67-9AB3-7BA8FFA6AA38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57EA6F68-FF7D-4B67-9AB3-7BA8FFA6AA38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57EA6F68-FF7D-4B67-9AB3-7BA8FFA6AA38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75D68E77-8D18-40DC-9196-32E5D0F22278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75D68E77-8D18-40DC-9196-32E5D0F22278}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75D68E77-8D18-40DC-9196-32E5D0F22278}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75D68E77-8D18-40DC-9196-32E5D0F22278}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B20FF2FD-1714-4A31-800C-08342D769828}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B20FF2FD-1714-4A31-800C-08342D769828}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B20FF2FD-1714-4A31-800C-08342D769828}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B20FF2FD-1714-4A31-800C-08342D769828}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{10571BBC-4BA9-4822-925A-2AB5085E2D0F} = {9213046E-BC69-429C-8B8E-82FC5603A4E4}
+		{9A9D8A46-C99D-4497-88C6-1666B3A31C1C} = {07B4F7E6-9CA2-4F69-9858-63471BD64B3D}
+		{18451558-C1FC-4ADB-BD74-D29E0F35A20B} = {9213046E-BC69-429C-8B8E-82FC5603A4E4}
+		{F754F468-D0E4-4768-8631-A8E38AC77AC4} = {07B4F7E6-9CA2-4F69-9858-63471BD64B3D}
+		{44DDA941-31F0-4ACA-BB68-9788E922040B} = {9213046E-BC69-429C-8B8E-82FC5603A4E4}
+		{57EA6F68-FF7D-4B67-9AB3-7BA8FFA6AA38} = {07B4F7E6-9CA2-4F69-9858-63471BD64B3D}
+		{75D68E77-8D18-40DC-9196-32E5D0F22278} = {9213046E-BC69-429C-8B8E-82FC5603A4E4}
+		{B20FF2FD-1714-4A31-800C-08342D769828} = {07B4F7E6-9CA2-4F69-9858-63471BD64B3D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {36D82B60-A437-43C7-8C73-8CB2B56EBC08}
+	EndGlobalSection
+EndGlobal
