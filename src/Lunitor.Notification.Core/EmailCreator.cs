@@ -22,15 +22,15 @@ namespace Lunitor.Notification.Core
         public IEnumerable<Email> CreateEmails(EmailTemplate template)
         {
             Guard.Against.Null(template, nameof(template));
-            Guard.Against.NullOrEmpty(template.Text, nameof(template.Text));
             Guard.Against.NullOrEmpty(template.Type, nameof(template.Type));
-            Guard.Against.NullOrEmpty(template.Subject, nameof(template.Subject));
+            Guard.Against.NullOrEmpty(template.Content.Subject, nameof(template.Content.Subject));
+            Guard.Against.NullOrEmpty(template.Content.Text, nameof(template.Content.Text));
 
             var emailContext = _emailContextProvider.GetEmailContext();
 
             EmailFactory emailFactory = _emailFactoryProducer.GetEmailFactory(template.Type);
 
-            return emailFactory.CreateEmails(template, emailContext);
+            return emailFactory.CreateEmails(template.Content, emailContext);
         }
     }
 }

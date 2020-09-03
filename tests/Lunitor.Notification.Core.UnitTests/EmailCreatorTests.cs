@@ -31,11 +31,11 @@ namespace Lunitor.Notification.Core.UnitTests
                 });
 
             _byUserEmailFactoryMock = new Mock<ByUserEmailFactory>();
-            _byUserEmailFactoryMock.Setup(byuserFactory => byuserFactory.CreateEmails(It.IsAny<EmailTemplate>(), It.IsAny<EmailContext>()))
+            _byUserEmailFactoryMock.Setup(byuserFactory => byuserFactory.CreateEmails(It.IsAny<EmailTemplateContent>(), It.IsAny<EmailContext>()))
                 .Returns(new List<Email>());
 
             _commonEmailFactoryMock = new Mock<CommonEmailFactory>();
-            _commonEmailFactoryMock.Setup(commonFactory => commonFactory.CreateEmails(It.IsAny<EmailTemplate>(), It.IsAny<EmailContext>()))
+            _commonEmailFactoryMock.Setup(commonFactory => commonFactory.CreateEmails(It.IsAny<EmailTemplateContent>(), It.IsAny<EmailContext>()))
                 .Returns(new List<Email>());
 
             _emailCreator = new EmailCreator(_emailContextProviderMock.Object, _emailFactoryProducerMock.Object);
@@ -64,12 +64,7 @@ namespace Lunitor.Notification.Core.UnitTests
         [InlineData("")]
         public void CreateEmailsThrowsArgumentExceptionWhenTemplateTextIsNullOrEmpty(string text)
         {
-            var template = new EmailTemplate
-            {
-                Text = text,
-                Type = "testtype",
-                Subject = "test subject"
-            };
+            var template = new EmailTemplate("testtype", "test subject", text);
 
             Assert.ThrowsAny<ArgumentException>(() => _emailCreator.CreateEmails(template));
         }
@@ -79,12 +74,7 @@ namespace Lunitor.Notification.Core.UnitTests
         [InlineData("")]
         public void CreateEmailsThrowsArgumentExceptionWhenTemplateTypeIsNullOrEmpty(string type)
         {
-            var template = new EmailTemplate
-            {
-                Text = "test text",
-                Type = type,
-                Subject = "test subject"
-            };
+            var template = new EmailTemplate(type, "test subject", "test text");
 
             Assert.ThrowsAny<ArgumentException>(() => _emailCreator.CreateEmails(template));
         }
@@ -94,12 +84,7 @@ namespace Lunitor.Notification.Core.UnitTests
         [InlineData("")]
         public void CreateEmailsThrowsArgumentExceptionWhenTemplateSubjectIsNullOrEmpty(string subject)
         {
-            var template = new EmailTemplate
-            {
-                Text = "test text",
-                Type = "test type",
-                Subject = subject
-            };
+            var template = new EmailTemplate("test type", subject, "test text");
 
             Assert.ThrowsAny<ArgumentException>(() => _emailCreator.CreateEmails(template));
         }

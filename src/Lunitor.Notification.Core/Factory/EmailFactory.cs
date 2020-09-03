@@ -5,6 +5,8 @@ namespace Lunitor.Notification.Core.Factory
 {
     abstract class EmailFactory
     {
-        public abstract IEnumerable<Email> CreateEmails(EmailTemplate template, EmailContext context);
+        public abstract IDictionary<string, string> Placeholders { get; }
+
+        public abstract IEnumerable<Email> CreateEmails(EmailTemplateContent templateContent, EmailContext context);
     }
 }

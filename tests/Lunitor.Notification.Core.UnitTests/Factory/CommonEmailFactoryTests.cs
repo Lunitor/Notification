@@ -9,9 +9,13 @@ namespace Lunitor.Notification.Core.UnitTests.Factory
     {
         private  CommonEmailFactory _commonEmailFactory;
 
+        private readonly EmailTemplateContent TestEmailTemplateContent;
+
         public CommonEmailFactoryTests()
         {
             _commonEmailFactory = new CommonEmailFactory();
+
+            TestEmailTemplateContent = new EmailTemplateContent("test subject", "test text");
         }
 
         [Fact]
@@ -19,14 +23,7 @@ namespace Lunitor.Notification.Core.UnitTests.Factory
         {
             var emailContext = new EmailContext();
 
-            var template = new EmailTemplate
-            {
-                Text = "test text",
-                Type = "test type",
-                Subject = "test subject"
-            };
-
-            var emails = _commonEmailFactory.CreateEmails(template, emailContext);
+            var emails = _commonEmailFactory.CreateEmails(TestEmailTemplateContent, emailContext);
 
             Assert.NotNull(emails);
         }
@@ -38,14 +35,7 @@ namespace Lunitor.Notification.Core.UnitTests.Factory
             emailContext.Users.Add(new User() { Name = "test user 1", EmailAddress = "user1@test.net" });
             emailContext.Users.Add(new User() { Name = "test user 2", EmailAddress = "user2@test.net" });
 
-            var template = new EmailTemplate
-            {
-                Text = "test text",
-                Type = "Common",
-                Subject = "test subject"
-            };
-
-            var emails = _commonEmailFactory.CreateEmails(template, emailContext);
+            var emails = _commonEmailFactory.CreateEmails(TestEmailTemplateContent, emailContext);
 
             Assert.NotNull(emails);
             Assert.Single(emails);

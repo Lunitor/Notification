@@ -5,14 +5,16 @@ namespace Lunitor.Notification.Core.Factory
 {
     class CommonEmailFactory : EmailFactory
     {
-        public override IEnumerable<Email> CreateEmails(EmailTemplate template, EmailContext context)
+        public override IDictionary<string, string> Placeholders => new Dictionary<string, string>();
+
+        public override IEnumerable<Email> CreateEmails(EmailTemplateContent templateContent, EmailContext context)
         {
             var emails = new List<Email>();
 
             var email = new Email
             {
-                Subject = template.Subject,
-                Body = template.Text
+                Subject = templateContent.Subject,
+                Body = templateContent.Text
             };
 
             foreach (var user in context.Users)
