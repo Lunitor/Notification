@@ -2,7 +2,7 @@
 
 namespace Lunitor.Notification.Core.Model
 {
-    internal class Email
+    public class Email
     {
         public string ToAddress { get; set; }
         public List<string> BCCAddresses { get; private set; } = new List<string>();
