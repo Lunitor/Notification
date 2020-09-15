@@ -2,7 +2,7 @@
 
 namespace Lunitor.Notification.Core
 {
-    interface IEmailContextProvider
+    public interface IEmailContextProvider
     {
         EmailContext GetEmailContext();
     }
