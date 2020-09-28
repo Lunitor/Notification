@@ -1,24 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Ardalis.GuardClauses;
+using Lunitor.Notification.Core.Repository;
+using System;
 using System.Linq;
-using System.Reflection;
 
 namespace Lunitor.Notification.Core.Factory
 {
     internal class EmailFactoryProducer : IEmailFactoryProducer
     {
-        private readonly IEnumerable<Type> _emailFactoryTypes;
+        private readonly IEmailFactoryTypeRepository _emailFactoryTypeRepository;
 
-        public EmailFactoryProducer()
+        public EmailFactoryProducer(IEmailFactoryTypeRepository emailFactoryTypeRepository)
         {
-            _emailFactoryTypes = Assembly.GetExecutingAssembly()
-                .GetTypes()
-                .Where(t => t.BaseType == typeof(EmailFactory));
+            Guard.Against.Null(emailFactoryTypeRepository, nameof(emailFactoryTypeRepository));
+            _emailFactoryTypeRepository = emailFactoryTypeRepository;
         }
 
         public EmailFactory GetEmailFactory(string templateType)
         {
-            var emailFactoryType = _emailFactoryTypes
+            var emailFactoryType = _emailFactoryTypeRepository
+                .GetAllTypes()
                 .FirstOrDefault(factoryType => MathcingWithTemplateType(templateType, factoryType))
                 ?? throw new ArgumentOutOfRangeException(templateType);
 
