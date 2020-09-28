@@ -1,9 +1,8 @@
 ﻿namespace Lunitor.Notification.Core.Model
 {
-    internal class EmailTemplate
+    public class EmailTemplate
     {
         public string Type { get; internal set; }
-        public EmailTemplateContent TemplateContent { get; }
         public EmailTemplateContent Content { get; internal set; } = new EmailTemplateContent();
 
         public EmailTemplate(){}
@@ -11,7 +10,7 @@
         public EmailTemplate(string type, EmailTemplateContent templateContent)
         {
             Type = type;
-            TemplateContent = templateContent;
+            Content = templateContent;
         }
 
         public EmailTemplate(string type, string subject, string text)
