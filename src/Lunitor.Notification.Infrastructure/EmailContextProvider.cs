@@ -1,6 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using Lunitor.Notification.Core;
 using Lunitor.Notification.Core.Model;
+using Lunitor.Notification.Core.Repository;
 
 namespace Lunitor.Notification.Infrastructure
 {

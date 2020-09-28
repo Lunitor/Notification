@@ -1,9 +1,8 @@
-﻿using Lunitor.Notification.Core;
-using Lunitor.Notification.Core.Model;
+﻿using Lunitor.Notification.Core.Model;
+using Lunitor.Notification.Core.Repository;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace Lunitor.Notification.Infrastructure.UnitTests
@@ -22,13 +21,13 @@ namespace Lunitor.Notification.Infrastructure.UnitTests
         }
 
         [Fact]
-        public void ConstructorThrowsArgumentNullExceptionWhenUserRepositoryIsNull()
+        public void Constructor_ThrowsArgumentNullException_WhenUserRepositoryIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new EmailContextProvider(null));
         }
 
         [Fact]
-        public void GetEmailContextReturnsNotNullEmailContext()
+        public void GetEmailContext_ReturnsNotNullEmailContext()
         {
             var context = _emailContextProvider.GetEmailContext();
 
@@ -36,7 +35,7 @@ namespace Lunitor.Notification.Infrastructure.UnitTests
         }
 
         [Fact]
-        public void GetEmailContextReturnsEmailContextWithNotNullUsers()
+        public void GetEmailContext_ReturnsEmailContext_WithNotNullUsers()
         {
             var context = _emailContextProvider.GetEmailContext();
 
@@ -44,7 +43,7 @@ namespace Lunitor.Notification.Infrastructure.UnitTests
         }
 
         [Fact]
-        public void GetEmailContextReturnsEmailContextWithEmptyUsersIfNoUsersReturnedFromUserRepository()
+        public void GetEmailContext_ReturnsEmailContext_WithEmptyUsers_WhenNoUsersReturnedFromUserRepository()
         {
             _userRepositoryMock.Setup(repository => repository.GetAll())
                 .Returns(new List<User>());
@@ -55,7 +54,7 @@ namespace Lunitor.Notification.Infrastructure.UnitTests
         }
 
         [Fact]
-        public void GetEmailContextReturnsEmailContextWithUsersThatReturnedFromUserRepository()
+        public void GetEmailContext_ReturnsEmailContext_WithUsersThatReturnedFromUserRepository()
         {
             var testUsers = new List<User>
                 {
