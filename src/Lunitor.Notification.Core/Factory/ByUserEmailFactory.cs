@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Lunitor.Notification.Core.Factory
 {
-    class ByUserEmailFactory : EmailFactory
+    internal class ByUserEmailFactory : EmailFactory
     {
         public override IDictionary<string, string> Placeholders => new Dictionary<string, string>
         {

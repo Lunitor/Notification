@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Lunitor.Notification.Infrastructure
 {
-    public class EmailSender : IEmailSender
+    internal class EmailSender : IEmailSender
     {
         private readonly SmtpConfiguration _smtpConfiguration;
         private readonly ISmtpClient _smtpClient;
