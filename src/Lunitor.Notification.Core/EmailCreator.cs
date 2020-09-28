@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Lunitor.Notification.Core
 {
-    class EmailCreator
+    internal class EmailCreator : IEmailCreator
     {
         private readonly IEmailContextProvider _emailContextProvider;
         private readonly IEmailFactoryProducer _emailFactoryProducer;
