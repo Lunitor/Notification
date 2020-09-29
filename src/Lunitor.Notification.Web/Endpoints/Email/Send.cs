@@ -22,7 +22,7 @@ namespace Lunitor.Notification.Web.Endpoints.Email
             _emailSender = emailSender;
         }
 
-        [HttpPost("/send")]
+        [HttpPost("/api/sendemail")]
         [Consumes("application/json")]
         public override async Task<ActionResult<SendEmailResponse>> HandleAsync(SendEmailRequest request, CancellationToken cancellationToken = default)
         {
