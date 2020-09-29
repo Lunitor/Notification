@@ -1,4 +1,5 @@
 using FluentValidation.AspNetCore;
+using Lunitor.Notification.Infrastructure.Configuration;
 using Lunitor.Notification.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,6 +24,8 @@ namespace Lunitor.Notification.Web
         {
             services.AddControllersWithViews()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+
+            services.Configure<SmtpConfiguration>(Configuration.GetSection(nameof(SmtpConfiguration)));
 
             services.AddApplicationDependencies();
 
