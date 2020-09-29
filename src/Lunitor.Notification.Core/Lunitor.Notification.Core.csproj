@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
 
@@ -17,5 +17,10 @@
 
   <ItemGroup>
     <PackageReference Include="Ardalis.GuardClauses" Version="3.0.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lunitor.Notification.Shared\Lunitor.Notification.Shared.csproj" />
   </ItemGroup>
 </Project>

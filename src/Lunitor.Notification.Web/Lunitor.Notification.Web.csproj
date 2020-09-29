@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lunitor.Notification.Core\Lunitor.Notification.Core.csproj" />
+    <ProjectReference Include="..\Lunitor.Notification.Infrastructure\Lunitor.Notification.Infrastructure.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
