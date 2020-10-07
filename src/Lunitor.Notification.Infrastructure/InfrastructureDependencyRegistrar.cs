@@ -1,5 +1,6 @@
 ﻿using Lunitor.Notification.Core;
 using Lunitor.Notification.Core.Repository;
+using Lunitor.Notification.Infrastructure.Repository;
 using Lunitor.Notification.Shared;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,7 @@ namespace Lunitor.Notification.Infrastructure
         {
             services.AddScoped<IEmailContextProvider, EmailContextProvider>();
             services.AddScoped<IEmailSender, EmailSender>();
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddHttpClient<IUserRepository, JellyfinUserRepository>();
             services.AddTransient<ISmtpClient, SmtpClient>();
         }
     }

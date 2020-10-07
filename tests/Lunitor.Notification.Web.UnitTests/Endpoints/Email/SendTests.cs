@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -79,8 +80,8 @@ namespace Lunitor.Notification.Web.UnitTests.Endpoints.Email
                 new Core.Model.Email(),
                 new Core.Model.Email()
             };
-            _emailCreatorMock.Setup(ec => ec.CreateEmails(It.IsAny<EmailTemplate>()))
-                .Returns(generatedEmails);
+            _emailCreatorMock.Setup(ec => ec.CreateEmailsAsync(It.IsAny<EmailTemplate>()))
+                .Returns(Task.FromResult<IEnumerable<Core.Model.Email>>(generatedEmails));
 
             var response = await _send.HandleAsync(request);
 

@@ -26,6 +26,7 @@ namespace Lunitor.Notification.Web
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             services.Configure<SmtpConfiguration>(Configuration.GetSection(nameof(SmtpConfiguration)));
+            services.Configure<JellyfinUserRepositoryConfiguration>(Configuration.GetSection(nameof(JellyfinUserRepositoryConfiguration)));
 
             services.AddApplicationDependencies();
 

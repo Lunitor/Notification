@@ -2,6 +2,7 @@
 using Lunitor.Notification.Core;
 using Lunitor.Notification.Core.Model;
 using Lunitor.Notification.Core.Repository;
+using System.Threading.Tasks;
 
 namespace Lunitor.Notification.Infrastructure
 {
@@ -16,9 +17,9 @@ namespace Lunitor.Notification.Infrastructure
             _userRepository = userRepository;
         }
 
-        public EmailContext GetEmailContext()
+        public async Task<EmailContext> GetEmailContextAsync()
         {
-            var users = _userRepository.GetAll();
+            var users = await _userRepository.GetAllAsync();
 
             var context = new EmailContext();
             context.Users.AddRange(users);

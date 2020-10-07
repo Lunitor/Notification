@@ -2,6 +2,7 @@
 using Lunitor.Notification.Core.Factory;
 using Lunitor.Notification.Core.Model;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Lunitor.Notification.Core
 {
@@ -19,14 +20,14 @@ namespace Lunitor.Notification.Core
             _emailFactoryProducer = emailFactoryProducer;
         }
 
-        public IEnumerable<Email> CreateEmails(EmailTemplate template)
+        public async Task<IEnumerable<Email>> CreateEmailsAsync(EmailTemplate template)
         {
             Guard.Against.Null(template, nameof(template));
             Guard.Against.NullOrEmpty(template.Type, nameof(template.Type));
             Guard.Against.NullOrEmpty(template.Content.Subject, nameof(template.Content.Subject));
             Guard.Against.NullOrEmpty(template.Content.Text, nameof(template.Content.Text));
 
-            var emailContext = _emailContextProvider.GetEmailContext();
+            var emailContext = await _emailContextProvider.GetEmailContextAsync();
 
             EmailFactory emailFactory = _emailFactoryProducer.GetEmailFactory(template.Type);
 

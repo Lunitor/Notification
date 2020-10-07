@@ -3,6 +3,7 @@ using Lunitor.Notification.Core.Model;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Lunitor.Notification.Core.UnitTests
@@ -54,39 +55,39 @@ namespace Lunitor.Notification.Core.UnitTests
         }
 
         [Fact]
-        public void CreateEmailsThrowsArgumentNullExceptionWhenTemplateIsNull()
+        public async Task CreateEmailsAsyncThrowsArgumentNullExceptionWhenTemplateIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => _emailCreator.CreateEmails(null));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _emailCreator.CreateEmailsAsync(null));
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public void CreateEmailsThrowsArgumentExceptionWhenTemplateTextIsNullOrEmpty(string text)
+        public async Task CreateEmailsAsyncThrowsArgumentExceptionWhenTemplateTextIsNullOrEmpty(string text)
         {
             var template = new EmailTemplate("testtype", "test subject", text);
 
-            Assert.ThrowsAny<ArgumentException>(() => _emailCreator.CreateEmails(template));
+            await Assert.ThrowsAnyAsync<ArgumentException>(() => _emailCreator.CreateEmailsAsync(template));
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public void CreateEmailsThrowsArgumentExceptionWhenTemplateTypeIsNullOrEmpty(string type)
+        public async Task CreateEmailsAsyncThrowsArgumentExceptionWhenTemplateTypeIsNullOrEmpty(string type)
         {
             var template = new EmailTemplate(type, "test subject", "test text");
 
-            Assert.ThrowsAny<ArgumentException>(() => _emailCreator.CreateEmails(template));
+            await Assert.ThrowsAnyAsync<ArgumentException>(() => _emailCreator.CreateEmailsAsync(template));
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public void CreateEmailsThrowsArgumentExceptionWhenTemplateSubjectIsNullOrEmpty(string subject)
+        public async Task CreateEmailsAsyncThrowsArgumentExceptionWhenTemplateSubjectIsNullOrEmpty(string subject)
         {
             var template = new EmailTemplate("test type", subject, "test text");
 
-            Assert.ThrowsAny<ArgumentException>(() => _emailCreator.CreateEmails(template));
+            await Assert.ThrowsAnyAsync<ArgumentException>(() => _emailCreator.CreateEmailsAsync(template));
         }
     }
 }

@@ -3,6 +3,7 @@ using Lunitor.Notification.Core.Repository;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Lunitor.Notification.Infrastructure.UnitTests
@@ -27,34 +28,34 @@ namespace Lunitor.Notification.Infrastructure.UnitTests
         }
 
         [Fact]
-        public void GetEmailContext_ReturnsNotNullEmailContext()
+        public async Task GetEmailContextAsync_ReturnsNotNullEmailContext()
         {
-            var context = _emailContextProvider.GetEmailContext();
+            var context = await _emailContextProvider.GetEmailContextAsync();
 
             Assert.NotNull(context);
         }
 
         [Fact]
-        public void GetEmailContext_ReturnsEmailContext_WithNotNullUsers()
+        public async Task GetEmailContextAsync_ReturnsEmailContext_WithNotNullUsers()
         {
-            var context = _emailContextProvider.GetEmailContext();
+            var context = await _emailContextProvider.GetEmailContextAsync();
 
             Assert.NotNull(context.Users);
         }
 
         [Fact]
-        public void GetEmailContext_ReturnsEmailContext_WithEmptyUsers_WhenNoUsersReturnedFromUserRepository()
+        public async Task GetEmailContextAsync_ReturnsEmailContext_WithEmptyUsers_WhenNoUsersReturnedFromUserRepository()
         {
-            _userRepositoryMock.Setup(repository => repository.GetAll())
-                .Returns(new List<User>());
+            _userRepositoryMock.Setup(repository => repository.GetAllAsync())
+                .Returns(Task.FromResult<IEnumerable<User>>(new List<User>()));
 
-            var context = _emailContextProvider.GetEmailContext();
+            var context = await _emailContextProvider.GetEmailContextAsync();
 
             Assert.Empty(context.Users);
         }
 
         [Fact]
-        public void GetEmailContext_ReturnsEmailContext_WithUsersThatReturnedFromUserRepository()
+        public async Task GetEmailContextAsync_ReturnsEmailContext_WithUsersThatReturnedFromUserRepository()
         {
             var testUsers = new List<User>
                 {
@@ -70,10 +71,10 @@ namespace Lunitor.Notification.Infrastructure.UnitTests
                     },
                 };
 
-            _userRepositoryMock.Setup(repository => repository.GetAll())
-                .Returns(testUsers);
+            _userRepositoryMock.Setup(repository => repository.GetAllAsync())
+                .Returns(Task.FromResult<IEnumerable<User>>(testUsers));
 
-            var context = _emailContextProvider.GetEmailContext();
+            var context = await _emailContextProvider.GetEmailContextAsync();
 
             Assert.NotEmpty(context.Users);
             Assert.Equal(testUsers, context.Users);

@@ -31,7 +31,7 @@ namespace Lunitor.Notification.Web.Endpoints.Email
                 return BadRequest(ModelState);
             }
 
-            var emails = _emailCreator.CreateEmails(request.Map());
+            var emails = await _emailCreator.CreateEmailsAsync(request.Map());
 
             await _emailSender.SendAsync(emails);
 
