@@ -3,9 +3,11 @@ using Lunitor.Notification.Core;
 using Lunitor.Notification.Core.Model;
 using Lunitor.Notification.Infrastructure.Configuration;
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,50 +18,129 @@ namespace Lunitor.Notification.Infrastructure
     {
         private readonly SmtpConfiguration _smtpConfiguration;
         private readonly ISmtpClient _smtpClient;
+        private readonly ILogger<EmailSender> _logger;
 
-        public EmailSender(IOptions<SmtpConfiguration> smtpConfiguration, ISmtpClient smtpClient)
+        public EmailSender(IOptions<SmtpConfiguration> smtpConfiguration, ISmtpClient smtpClient, ILogger<EmailSender> logger)
         {
             Guard.Against.Null(smtpConfiguration, nameof(smtpConfiguration));
             Guard.Against.Null(smtpClient, nameof(smtpClient));
+            Guard.Against.Null(logger, nameof(logger));
 
             _smtpConfiguration = smtpConfiguration.Value;
             _smtpClient = smtpClient;
+            _logger = logger;
         }
 
         public async Task SendAsync(IEnumerable<Email> emails)
         {
             Guard.Against.Null(emails, nameof(emails));
 
-            await _smtpClient.ConnectAsync(_smtpConfiguration.SmtpServer, _smtpConfiguration.SmtpPort);
-            await _smtpClient.AuthenticateAsync(_smtpConfiguration.SenderUserName, _smtpConfiguration.SenderPassword);
+            await ConnectToSmtpServer();
 
-            List<Task> emailSendingTasks = GenerateEmailSendingTasks(emails);
-            await Task.WhenAll(emailSendingTasks);
+            if (_smtpClient.IsConnected)
+            {
+                var mimeMessages = GenerateMimeMessages(emails);
+                foreach (var mimeMessage in mimeMessages)
+                {
+                    try
+                    {
+                        await _smtpClient.SendAsync(mimeMessage);
 
-            await _smtpClient.DisconnectAsync(true);
+                        LogSuccessfullTaskCompletion(mimeMessage);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogFaultedTaskCompletion(ex, mimeMessage);
+                    }
+                }
+
+                await DisconnectFromSmtpServer();
+            }
         }
 
-        private List<Task> GenerateEmailSendingTasks(IEnumerable<Email> emails)
+        private async Task ConnectToSmtpServer()
         {
-            var emailsendingTasks = new List<Task>();
+            try
+            {
+                await _smtpClient.ConnectAsync(_smtpConfiguration.SmtpServer, _smtpConfiguration.SmtpPort);
+
+                if (_smtpClient.Capabilities.HasFlag(SmtpCapabilities.Authentication))
+                {
+                    await _smtpClient.AuthenticateAsync(_smtpConfiguration.SenderUserName, _smtpConfiguration.SenderPassword);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to connect/authenticate to the SMTP server ({address}:{port})!",
+                    _smtpConfiguration.SmtpServer,
+                    _smtpConfiguration.SmtpPort);
+
+                if (_smtpClient.IsConnected)
+                {
+                    await _smtpClient.DisconnectAsync(true);
+                }
+            }
+        }
+
+        private async Task DisconnectFromSmtpServer()
+        {
+            try
+            {
+                await _smtpClient.DisconnectAsync(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to disconnect from SMTP server!");
+            }
+        }
+
+        private List<MimeMessage> GenerateMimeMessages(IEnumerable<Email> emails)
+        {
+            var mimeMessages = new List<MimeMessage>();
             foreach (var email in emails)
             {
                 var message = new MimeMessage();
                 message.From.Add(new MailboxAddress(_smtpConfiguration.SenderName, _smtpConfiguration.SenderEmail));
+
                 if (!string.IsNullOrEmpty(email.ToAddress))
                     message.To.Add(MailboxAddress.Parse(email.ToAddress));
                 if (email.BCCAddresses.Count != 0)
                     message.Bcc.AddRange(email.BCCAddresses.Select(bcc => MailboxAddress.Parse(bcc)));
+
                 message.Subject = email.Subject;
                 message.Body = new TextPart(TextFormat.Plain)
                 {
                     Text = email.Body
                 };
 
-                emailsendingTasks.Add(_smtpClient.SendAsync(message));
+                mimeMessages.Add(message);
             }
 
-            return emailsendingTasks;
+            return mimeMessages;
+        }
+
+        private void LogSuccessfullTaskCompletion(MimeMessage mimeMessage)
+        {
+            if (mimeMessage.To.Count > 0)
+            {
+                _logger.LogInformation("Email [{subject}] sent to {emailAddress}!", mimeMessage.Subject, mimeMessage.To.First());
+            }
+            else
+            {
+                _logger.LogInformation("Email [{subject}] sent to multiple addresses in BCC!", mimeMessage.Subject);
+            }
+        }
+
+        private void LogFaultedTaskCompletion(Exception exception, MimeMessage mimeMessage)
+        {
+            if (mimeMessage.To.Count > 0)
+            {
+                _logger.LogError(exception, "Failed to send email [{subject}] to {emailAddress}!", mimeMessage.Subject, mimeMessage.To.First());
+            }
+            else
+            {
+                _logger.LogError(exception, "Failed to send email [{subject}] with multiple addresses in BCC!", mimeMessage.Subject);
+            }
         }
     }
 }
