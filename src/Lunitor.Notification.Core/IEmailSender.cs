@@ -6,6 +6,6 @@ namespace Lunitor.Notification.Core
 {
     public interface IEmailSender
     {
-        Task SendAsync(IEnumerable<Email> emails);
+        Task<IEnumerable<SendingResult>> SendAsync(IEnumerable<Email> emails);
     }
 }

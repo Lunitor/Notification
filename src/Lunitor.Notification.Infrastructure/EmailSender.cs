@@ -31,31 +31,37 @@ namespace Lunitor.Notification.Infrastructure
             _logger = logger;
         }
 
-        public async Task SendAsync(IEnumerable<Email> emails)
+        public async Task<IEnumerable<SendingResult>> SendAsync(IEnumerable<Email> emails)
         {
             Guard.Against.Null(emails, nameof(emails));
 
+            var sendingResults = new List<SendingResult>();
+
             await ConnectToSmtpServer();
 
-            if (_smtpClient.IsConnected)
+            if (!_smtpClient.IsConnected)
             {
-                var mimeMessages = GenerateMimeMessages(emails);
-                foreach (var mimeMessage in mimeMessages)
-                {
-                    try
-                    {
-                        await _smtpClient.SendAsync(mimeMessage);
-
-                        LogSuccessfullTaskCompletion(mimeMessage);
-                    }
-                    catch (Exception ex)
-                    {
-                        LogFaultedTaskCompletion(ex, mimeMessage);
-                    }
-                }
-
-                await DisconnectFromSmtpServer();
+                return sendingResults;
             }
+
+            var mimeMessages = GenerateMimeMessages(emails);
+            foreach (var mimeMessage in mimeMessages)
+            {
+                try
+                {
+                    await _smtpClient.SendAsync(mimeMessage);
+
+                    HandleSuccessfullTaskCompletion(mimeMessage, sendingResults);
+                }
+                catch (Exception ex)
+                {
+                    HandleFaultedTaskCompletion(ex, mimeMessage, sendingResults);
+                }
+            }
+
+            await DisconnectFromSmtpServer();
+
+            return sendingResults;
         }
 
         private async Task ConnectToSmtpServer()
@@ -119,7 +125,7 @@ namespace Lunitor.Notification.Infrastructure
             return mimeMessages;
         }
 
-        private void LogSuccessfullTaskCompletion(MimeMessage mimeMessage)
+        private void HandleSuccessfullTaskCompletion(MimeMessage mimeMessage, List<SendingResult> sendingResults)
         {
             if (mimeMessage.To.Count > 0)
             {
@@ -129,9 +135,11 @@ namespace Lunitor.Notification.Infrastructure
             {
                 _logger.LogInformation("Email [{subject}] sent to multiple addresses in BCC!", mimeMessage.Subject);
             }
+
+            sendingResults.Add(new SendingResult(mimeMessage.To.First().ToString(), true));
         }
 
-        private void LogFaultedTaskCompletion(Exception exception, MimeMessage mimeMessage)
+        private void HandleFaultedTaskCompletion(Exception exception, MimeMessage mimeMessage, List<SendingResult> sendingResults)
         {
             if (mimeMessage.To.Count > 0)
             {
@@ -141,6 +149,8 @@ namespace Lunitor.Notification.Infrastructure
             {
                 _logger.LogError(exception, "Failed to send email [{subject}] with multiple addresses in BCC!", mimeMessage.Subject);
             }
+
+            sendingResults.Add(new SendingResult(mimeMessage.To.First().ToString(), false));
         }
     }
 }

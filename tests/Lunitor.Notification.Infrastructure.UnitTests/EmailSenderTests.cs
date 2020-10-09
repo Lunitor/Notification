@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using Moq;
+using Moq.Language.Flow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -133,28 +134,19 @@ namespace Lunitor.Notification.Infrastructure.UnitTests
             _smtpClientMock.SetupGet(c => c.IsConnected)
                 .Returns(true);
 
-            _smtpClientMock.Setup(client => client.ConnectAsync(
-                It.IsAny<string>(),
-                It.IsAny<int>(),
-                It.IsAny<SecureSocketOptions>(),
-                It.IsAny<CancellationToken>()))
+            SetupSmtpConnectAsync()
                 .Callback(() => sequence.Add("Connect"))
                 .Returns(Task.CompletedTask);
-            _smtpClientMock.Setup(client => client.AuthenticateAsync(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<CancellationToken>()))
+
+            SetupSmtpAuthenticateAsync()
                 .Callback(() => sequence.Add("Auth"))
                 .Returns(Task.CompletedTask);
-            _smtpClientMock.Setup(client => client.SendAsync(
-                It.IsAny<MimeMessage>(),
-                It.IsAny<CancellationToken>(),
-                It.IsAny<ITransferProgress>()))
+
+            SetupSmtpSendAsync()
                 .Callback(() => sequence.Add("Send"))
                 .Returns(Task.CompletedTask);
-            _smtpClientMock.Setup(client => client.DisconnectAsync(
-                It.IsAny<bool>(),
-                It.IsAny<CancellationToken>()))
+
+            SetupSmtpDisconnectAsync()
                 .Callback(() => sequence.Add("Disconnect"))
                 .Returns(Task.CompletedTask);
 
@@ -184,35 +176,26 @@ namespace Lunitor.Notification.Infrastructure.UnitTests
             _smtpClientMock.SetupGet(c => c.IsConnected)
                 .Returns(() => isConnected);
 
-            _smtpClientMock.Setup(client => client.ConnectAsync(
-                It.IsAny<string>(),
-                It.IsAny<int>(),
-                It.IsAny<SecureSocketOptions>(),
-                It.IsAny<CancellationToken>()))
+            SetupSmtpConnectAsync()
                 .Callback(() =>
                     {
                         sequence.Add("Connect");
                         isConnected = true;
                     })
                 .Returns(Task.CompletedTask);
-            _smtpClientMock.Setup(client => client.AuthenticateAsync(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<CancellationToken>()))
+
+            SetupSmtpAuthenticateAsync()
                 .Callback(() => sequence.Add("Auth"))
                 .Returns(() =>
                     {
                         throw new Exception();
                     });
-            _smtpClientMock.Setup(client => client.SendAsync(
-                It.IsAny<MimeMessage>(),
-                It.IsAny<CancellationToken>(),
-                It.IsAny<ITransferProgress>()))
+
+            SetupSmtpSendAsync()
                 .Callback(() => sequence.Add("Send"))
                 .Returns(Task.CompletedTask);
-            _smtpClientMock.Setup(client => client.DisconnectAsync(
-                It.IsAny<bool>(),
-                It.IsAny<CancellationToken>()))
+
+            SetupSmtpDisconnectAsync()
                 .Callback(() =>
                     {
                         sequence.Add("Disconnect");
@@ -237,10 +220,7 @@ namespace Lunitor.Notification.Infrastructure.UnitTests
             _smtpClientMock.SetupGet(c => c.Capabilities)
                 .Returns(SmtpCapabilities.Authentication);
 
-            _smtpClientMock.Setup(client => client.SendAsync(
-                It.IsAny<MimeMessage>(),
-                It.IsAny<CancellationToken>(),
-                It.IsAny<ITransferProgress>()))
+            SetupSmtpSendAsync()
                 .Returns(Task.CompletedTask);
 
             // Act
@@ -279,10 +259,7 @@ namespace Lunitor.Notification.Infrastructure.UnitTests
             _smtpClientMock.SetupGet(c => c.IsConnected)
                 .Returns(true);
 
-            _smtpClientMock.Setup(client => client.SendAsync(
-                It.IsAny<MimeMessage>(),
-                It.IsAny<CancellationToken>(),
-                It.IsAny<ITransferProgress>()))
+            SetupSmtpSendAsync()
                 .Returns((MimeMessage message, CancellationToken token, ITransferProgress progress) =>
                 {
                     if (message.To.First().ToString() == TestSingleRecepientEmails.First().ToAddress)
@@ -304,6 +281,168 @@ namespace Lunitor.Notification.Infrastructure.UnitTests
                 It.IsAny<CancellationToken>(),
                 It.IsAny<ITransferProgress>()),
                 Times.Exactly(TestSingleRecepientEmails.Count));
+        }
+
+        [Fact]
+        public async Task SendAsync_ReturnsWithEmptyIEnumerable_IfSmtpClientCouldNotConnectToSmtpServer()
+        {
+            _smtpClientMock.SetupGet(c => c.Capabilities)
+                .Returns(SmtpCapabilities.Authentication);
+            _smtpClientMock.SetupGet(c => c.IsConnected)
+                .Returns(false);
+
+            SetupSmtpConnectAsync()
+                .Throws(new Exception());
+
+            // Act
+            var results = await _emailSender.SendAsync(TestSingleRecepientEmails);
+
+            // Assert
+            Assert.NotNull(results);
+            Assert.Empty(results);
+        }
+
+        [Fact]
+        public async Task SendAsync_ReturnsWithEmptyIEnumerable_IfSmtpClientCouldNotAuthenticate()
+        {
+            var isConnected = false;
+
+            _smtpClientMock.SetupGet(c => c.Capabilities)
+                .Returns(SmtpCapabilities.Authentication);
+            _smtpClientMock.SetupGet(c => c.IsConnected)
+                .Returns(() => isConnected);
+
+            SetupSmtpConnectAsync()
+                .Callback(() => isConnected = true)
+                .Returns(Task.CompletedTask);
+
+            SetupSmtpAuthenticateAsync()
+                .Throws(new Exception());
+
+            SetupSmtpDisconnectAsync()
+                .Callback(() => isConnected = false)
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var results = await _emailSender.SendAsync(TestSingleRecepientEmails);
+
+            // Assert
+            Assert.NotNull(results);
+            Assert.Empty(results);
+        }
+
+        [Fact]
+        public async Task SendAsync_ReturnsWithAsManySendingResultAsEmilsCount_IfSmtpClientReachedSendingPhase()
+        {
+            var isConnected = false;
+
+            _smtpClientMock.SetupGet(c => c.Capabilities)
+                .Returns(SmtpCapabilities.Authentication);
+            _smtpClientMock.SetupGet(c => c.IsConnected)
+                .Returns(() => isConnected);
+
+            SetupSmtpConnectAsync()
+                .Callback(() => isConnected = true)
+                .Returns(Task.CompletedTask);
+
+            SetupSmtpAuthenticateAsync()
+                .Returns(Task.CompletedTask);
+
+            SetupSmtpSendAsync()
+                .Returns(Task.CompletedTask);
+
+            SetupSmtpDisconnectAsync()
+                .Callback(() => isConnected = false)
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var results = await _emailSender.SendAsync(TestSingleRecepientEmails);
+
+            // Assert
+            Assert.NotNull(results);
+            Assert.NotEmpty(results);
+            Assert.Equal(TestSingleRecepientEmails.Count, results.Count());
+        }
+
+        [Fact]
+        public async Task SendAsync_ReturnsWithSendingResultCorrectIsSuccessProperty()
+        {
+            var isConnected = false;
+
+            _smtpClientMock.SetupGet(c => c.Capabilities)
+                .Returns(SmtpCapabilities.Authentication);
+            _smtpClientMock.SetupGet(c => c.IsConnected)
+                .Returns(() => isConnected);
+
+            SetupSmtpConnectAsync()
+                .Callback(() => isConnected = true)
+                .Returns(Task.CompletedTask);
+
+            SetupSmtpAuthenticateAsync()
+                .Returns(Task.CompletedTask);
+
+            SetupSmtpSendAsync()
+                .Returns((MimeMessage message, CancellationToken token, ITransferProgress progress) =>
+                {
+                    if (message.To.First().ToString() == TestSingleRecepientEmails.First().ToAddress)
+                    {
+                        throw new Exception();
+                    }
+
+                    return Task.CompletedTask;
+                });
+
+            SetupSmtpDisconnectAsync()
+                .Callback(() => isConnected = false)
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var results = await _emailSender.SendAsync(TestSingleRecepientEmails);
+
+            // Assert
+            foreach (var result in results)
+            {
+                if (result.EmailAddress == TestSingleRecepientEmails.First().ToAddress)
+                {
+                    Assert.False(result.IsSuccess);
+                }
+                else
+                {
+                    Assert.True(result.IsSuccess);
+                }
+            }
+        }
+
+        private ISetup<ISmtpClient, Task> SetupSmtpConnectAsync()
+        {
+            return _smtpClientMock.Setup(client => client.ConnectAsync(
+                It.IsAny<string>(),
+                It.IsAny<int>(),
+                It.IsAny<SecureSocketOptions>(),
+                It.IsAny<CancellationToken>()));
+        }
+
+        private ISetup<ISmtpClient, Task> SetupSmtpAuthenticateAsync()
+        {
+            return _smtpClientMock.Setup(client => client.AuthenticateAsync(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<CancellationToken>()));
+        }
+
+        private ISetup<ISmtpClient, Task> SetupSmtpSendAsync()
+        {
+            return _smtpClientMock.Setup(client => client.SendAsync(
+                It.IsAny<MimeMessage>(),
+                It.IsAny<CancellationToken>(),
+                It.IsAny<ITransferProgress>()));
+        }
+
+        private ISetup<ISmtpClient, Task> SetupSmtpDisconnectAsync()
+        {
+            return _smtpClientMock.Setup(client => client.DisconnectAsync(
+                It.IsAny<bool>(),
+                It.IsAny<CancellationToken>()));
         }
     }
 }
