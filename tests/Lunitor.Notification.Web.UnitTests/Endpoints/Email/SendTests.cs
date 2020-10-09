@@ -89,7 +89,6 @@ namespace Lunitor.Notification.Web.UnitTests.Endpoints.Email
             var result = response.Result as OkObjectResult;
             var value = result.Value as SendEmailResponse;
             Assert.Equal(request.Type, value.Type);
-            Assert.Equal(generatedEmails.Count, value.SentEmailCount);
         }
 
         [Fact]
@@ -98,6 +97,42 @@ namespace Lunitor.Notification.Web.UnitTests.Endpoints.Email
             var response = await _send.HandleAsync(new SendEmailRequest());
 
             _emailSenderMock.Verify(es => es.SendAsync(It.IsAny<IEnumerable<Core.Model.Email>>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task HandleAsync_ReturnsOkWithResultsContainsResultsOfEmailSending_WhenModelValidationSucceed()
+        {
+            // Arrange
+            var request = new SendEmailRequest
+            {
+                Type = "byuser"
+            };
+
+            var generatedEmails = new List<Core.Model.Email>
+            {
+                new Core.Model.Email{ ToAddress = "testuser@test.net" },
+                new Core.Model.Email{ ToAddress = "testuser2@test.net" }
+            };
+            _emailCreatorMock.Setup(ec => ec.CreateEmailsAsync(It.IsAny<EmailTemplate>()))
+                .Returns(Task.FromResult<IEnumerable<Core.Model.Email>>(generatedEmails));
+
+            _emailSenderMock.Setup(sender => sender.SendAsync(It.IsAny<IEnumerable<Core.Model.Email>>()))
+                .Returns(Task.FromResult(generatedEmails
+                                            .Select(email => new SendingResult(email.ToAddress, true))));
+
+            // Act
+            var response = await _send.HandleAsync(request);
+
+            // Assert
+            Assert.IsType<OkObjectResult>(response.Result);
+            var result = response.Result as OkObjectResult;
+            var sendEmailResponse = result.Value as SendEmailResponse;
+
+            Assert.Equal(generatedEmails.Count, sendEmailResponse.Results.Count());
+            for (int i = 0; i < generatedEmails.Count; i++)
+            {
+                Assert.Equal(generatedEmails[i].ToAddress, sendEmailResponse.Results.ElementAt(i).EmailAddress);
+            }
         }
     }
 }

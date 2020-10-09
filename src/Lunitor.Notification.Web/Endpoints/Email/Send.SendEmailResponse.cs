@@ -1,8 +1,11 @@
-﻿namespace Lunitor.Notification.Web.Endpoints.Email
+﻿using Lunitor.Notification.Core.Model;
+using System.Collections.Generic;
+
+namespace Lunitor.Notification.Web.Endpoints.Email
 {
     public class SendEmailResponse
     {
         public string Type { get; set; }
-        public int SentEmailCount { get; set; }
+        public IEnumerable<SendingResult> Results{ get; set; }
     }
 }

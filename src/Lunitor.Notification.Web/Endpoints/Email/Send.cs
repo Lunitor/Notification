@@ -33,12 +33,12 @@ namespace Lunitor.Notification.Web.Endpoints.Email
 
             var emails = await _emailCreator.CreateEmailsAsync(request.Map());
 
-            await _emailSender.SendAsync(emails);
+            var results = await _emailSender.SendAsync(emails);
 
             return Ok(new SendEmailResponse
             {
                 Type = request.Type,
-                SentEmailCount = emails.Count()
+                Results = results
             });
         }
     }
