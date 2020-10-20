@@ -8,6 +8,9 @@ export interface CreateEmailState {
     isLoading: boolean;
     emailTypes: EmailType[];
     selectedEmailType: EmailType;
+    emailBody: string;
+    cursorPositionInEmailBody: number;
+    emailSubject: string;
 }
 
 export interface EmailType {
@@ -38,9 +41,29 @@ interface SelectEmailTypeAction {
     selectedEmailType: EmailType;
 }
 
+interface ModifyEmailBodyAction {
+    type: 'MODIFY_EMAIL_BODY';
+    emailBody: string;
+}
+
+interface UpdatecursorPositionInEmailBodyAction {
+    type: 'UPDATE_CURSOR_POSITION_IN_EMAIL_BODY';
+    cursorPosition: number;
+}
+
+interface ModifyEmailSubjectAction {
+    type: 'MODIFY_EMAIL_SUBJECT';
+    emailSubject: string;
+}
+
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-type KnownAction = RequestEmailTypesAction | ReceiveEmailTypesAction | SelectEmailTypeAction;
+type KnownAction = RequestEmailTypesAction |
+    ReceiveEmailTypesAction |
+    SelectEmailTypeAction |
+    ModifyEmailBodyAction |
+    UpdatecursorPositionInEmailBodyAction |
+    ModifyEmailSubjectAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -93,6 +116,18 @@ export const actionCreators = {
 
     selectEmailType: (selectedEmailType: EmailType): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({ type: 'SELECT_EMAIL_TYPE', selectedEmailType: selectedEmailType });
+    },
+
+    modifyEmailBody: (emailBody: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'MODIFY_EMAIL_BODY', emailBody: emailBody })
+    },
+
+    updateCursorPositionInEmailBody: (cursorPosition: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'UPDATE_CURSOR_POSITION_IN_EMAIL_BODY', cursorPosition: cursorPosition })
+    },
+
+    modifyEmailSubject: (emailSubject: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'MODIFY_EMAIL_SUBJECT', emailSubject: emailSubject });
     }
 };
 
@@ -100,7 +135,12 @@ export const actionCreators = {
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
 const unloadedState: CreateEmailState = {
-    emailTypes: [], isLoading: false, selectedEmailType: { name: "", tags: [] }
+    emailTypes: [],
+    isLoading: false,
+    selectedEmailType: { name: "", tags: [] },
+    emailBody: "",
+    cursorPositionInEmailBody: 0,
+    emailSubject: ""
 };
 
 export const reducer: Reducer<CreateEmailState> = (state: CreateEmailState | undefined, incomingAction: Action): CreateEmailState => {
@@ -114,20 +154,56 @@ export const reducer: Reducer<CreateEmailState> = (state: CreateEmailState | und
             return {
                 selectedEmailType: state.selectedEmailType,
                 emailTypes: state.emailTypes,
-                isLoading: true
+                isLoading: true,
+                emailBody: state.emailBody,
+                cursorPositionInEmailBody: state.cursorPositionInEmailBody,
+                emailSubject: state.emailSubject
             };
         case 'RECEIVE_EMAIL_TYPES':
             return {
                 selectedEmailType: action.emailTypes.length > 0 ? action.emailTypes[0]: state.selectedEmailType,
                 emailTypes: action.emailTypes,
-                isLoading: false
+                isLoading: false,
+                emailBody: state.emailBody,
+                cursorPositionInEmailBody: state.cursorPositionInEmailBody,
+                emailSubject: state.emailSubject
             };
         case 'SELECT_EMAIL_TYPE':
             return {
                 selectedEmailType: action.selectedEmailType,
                 emailTypes: state.emailTypes,
-                isLoading: false
-            }
+                isLoading: false,
+                emailBody: state.emailBody,
+                cursorPositionInEmailBody: state.cursorPositionInEmailBody,
+                emailSubject: state.emailSubject
+            };
+        case 'MODIFY_EMAIL_BODY':
+            return {
+                selectedEmailType: state.selectedEmailType,
+                emailTypes: state.emailTypes,
+                isLoading: false,
+                emailBody: action.emailBody,
+                cursorPositionInEmailBody: state.cursorPositionInEmailBody,
+                emailSubject: state.emailSubject
+            };
+        case 'UPDATE_CURSOR_POSITION_IN_EMAIL_BODY':
+            return {
+                selectedEmailType: state.selectedEmailType,
+                emailTypes: state.emailTypes,
+                isLoading: false,
+                emailBody: state.emailBody,
+                cursorPositionInEmailBody: action.cursorPosition,
+                emailSubject: state.emailSubject
+            };
+        case "MODIFY_EMAIL_SUBJECT":
+            return {
+                selectedEmailType: state.selectedEmailType,
+                emailTypes: state.emailTypes,
+                isLoading: false,
+                emailBody: state.emailBody,
+                cursorPositionInEmailBody: state.cursorPositionInEmailBody,
+                emailSubject: action.emailSubject
+            };
         default: return state;
     }
 };

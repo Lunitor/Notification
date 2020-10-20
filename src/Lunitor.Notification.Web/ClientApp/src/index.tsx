@@ -1,4 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.css';
+import 'react-tabs/style/react-tabs.css';
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
