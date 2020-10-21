@@ -20,12 +20,26 @@ namespace Lunitor.Notification.Core.Repository
         public IEnumerable<string> GetAllNames()
         {
             return _emailFactoryTypes
-                .Select(t => t.Name.Replace(nameof(EmailFactory), ""));
+                .Select(t => CleanupName(t.Name));
         }
 
         public IEnumerable<Type> GetAllTypes()
         {
             return _emailFactoryTypes;
+        }
+
+        public IDictionary<string, string> GetPlaceholders(string factoryTypeName)
+        {
+            var factoryType = _emailFactoryTypes.FirstOrDefault(type => CleanupName(type.Name) == factoryTypeName.ToUpperInvariant());
+            var factory = Activator.CreateInstance(factoryType) as EmailFactory;
+
+            return factory.Placeholders;
+        }
+
+        private string CleanupName(string typeName)
+        {
+            return typeName.Replace(nameof(EmailFactory), "")
+                .ToUpperInvariant();
         }
     }
 }

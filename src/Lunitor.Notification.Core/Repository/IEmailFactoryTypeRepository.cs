@@ -7,5 +7,6 @@ namespace Lunitor.Notification.Core.Repository
     {
         public IEnumerable<string> GetAllNames();
         public IEnumerable<Type> GetAllTypes();
+        public IDictionary<string, string> GetPlaceholders(string factoryTypeName);
     }
 }
