@@ -1,5 +1,6 @@
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from './';
+import { GetEmailTypesResponse, EmailTypeResponse } from '../models/GetEmailTypesResponse';
 
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
@@ -94,23 +95,24 @@ export const actionCreators = {
                 tags: commonTags
             })
 
-            //fetch(``)
-            //    //.then(response => response.json())
-            //    .then(data => {
-            //        //dispatch({ type: 'RECEIVE_EMAIL_TYPES', emailTypes: data });
-                    
-            //        dispatch({ type: 'RECEIVE_EMAIL_TYPES', emailTypes: testEmailTypes })
-            //    })
-            //    .catch(exception => {
-            //        dispatch({ type: 'RECEIVE_EMAIL_TYPES', emailTypes: testEmailTypes })
-            //    });
+            fetch(`/api/getemailtypes`)
+                .then(response => response.json() as Promise<GetEmailTypesResponse>)
+                .then(data => {
+
+                    const emailTypes: EmailType[] = data.emailTypes.map((emailType: EmailTypeResponse) => {
+                        return {
+                            name: emailType.name,
+                            tags: extractTags(emailType)
+                        };
+                    })
+
+                    dispatch({ type: 'RECEIVE_EMAIL_TYPES', emailTypes: emailTypes })
+                })
+                .catch(exception => {
+                    console.log(exception);
+                });
 
             dispatch({ type: 'REQUEST_EMAIL_TYPES' });
-            setTimeout(() =>
-            {
-                dispatch({ type: 'RECEIVE_EMAIL_TYPES', emailTypes: testEmailTypes })
-            }, 500);
-            
         }
     },
 
@@ -207,3 +209,15 @@ export const reducer: Reducer<CreateEmailState> = (state: CreateEmailState | und
         default: return state;
     }
 };
+
+function extractTags(emailType: EmailTypeResponse): Tag[] {
+    const tagNames: string[] = Object.keys(emailType.placeholders);
+    const tagPlaceholders: string[] = Object.values(emailType.placeholders);
+
+    return tagNames.map((tagName: string, index: number) => {
+        return {
+            name: tagName,
+            placeholder: tagPlaceholders[index]
+        };
+    });
+}
