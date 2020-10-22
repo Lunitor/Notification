@@ -2,7 +2,6 @@
 using Ardalis.GuardClauses;
 using Lunitor.Notification.Core;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
