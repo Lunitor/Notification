@@ -1,42 +1,30 @@
 import * as React from 'react';
-import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
+import { Navbar, NavItem, NavLink, Nav, NavbarBrand } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import './NavMenu.css';
 
-export default class NavMenu extends React.PureComponent<{}, { isOpen: boolean }> {
-    public state = {
-        isOpen: false
-    };
-
+export default class NavMenu extends React.PureComponent<{}> {
     public render() {
         return (
-            <header>
-                <Navbar className="navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" light>
-                    <Container>
-                        <NavbarBrand tag={Link} to="/">Lunitor.Notification</NavbarBrand>
-                        <NavbarToggler onClick={this.toggle} className="mr-2"/>
-                        <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={this.state.isOpen} navbar>
-                            <ul className="navbar-nav flex-grow">
-                                <NavItem>
-                                    <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
-                                </NavItem>
-                                <NavItem>
-                                    <NavLink tag={Link} className="text-dark" to="/counter">Counter</NavLink>
-                                </NavItem>
-                                <NavItem>
-                                    <NavLink tag={Link} className="text-dark" to="/email/create">Create email</NavLink>
-                                </NavItem>
-                            </ul>
-                        </Collapse>
-                    </Container>
+            <div className="sidebar box-shadow">
+                <Navbar className="top-row pl-4" dark>
+                    <NavbarBrand href="/">Lunitor.Notification</NavbarBrand>
                 </Navbar>
-            </header>
+                <Nav vertical>
+                    <NavItem>
+                        <NavLink tag={Link} to="/counter">
+                            <span className="oi oi-timer" aria-hidden="true"></span>
+                            Counter
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink tag={Link} to="/email/create">
+                            <span className="oi oi-envelope-closed" aria-hidden="true"></span>
+                            Create email
+                        </NavLink>
+                    </NavItem>
+                </Nav>
+            </div>
         );
-    }
-
-    private toggle = () => {
-        this.setState({
-            isOpen: !this.state.isOpen
-        });
     }
 }
