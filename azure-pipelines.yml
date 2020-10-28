@@ -10,10 +10,13 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  group: 'Build Variables'
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  - group: 'Build Variables'
+  - name: solution
+    value: '**/*.sln'
+  - name:  buildPlatform
+    value: 'Any CPU'
+  - name: buildConfiguration
+    value: 'Release'
 
 steps:
 
