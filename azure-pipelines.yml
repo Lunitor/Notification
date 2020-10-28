@@ -10,6 +10,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
+  group: 'Build Variables'
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
@@ -21,7 +22,7 @@ steps:
     command: 'restore'
     projects: '**/*.sln'
     feedsToUse: 'select'
-    vstsFeed: '89168acf-a74f-48ae-acbb-004b81944d9d'
+    vstsFeed: $(VstsFeed)
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build $(buildConfiguration)'
