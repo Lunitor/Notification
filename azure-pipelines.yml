@@ -41,7 +41,7 @@ steps:
   displayName: 'dotnet publish $(buildConfiguration)'
   inputs:
     command: 'publish'
-    projects: '**/*.Server.csproj'
+    projects: '**/*.Web.csproj'
     publishWebProjects: false
     arguments: '--configuration $(BuildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/Deploy'
     modifyOutputPath: true
