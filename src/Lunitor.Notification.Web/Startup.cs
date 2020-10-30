@@ -27,6 +27,7 @@ namespace Lunitor.Notification.Web
 
             services.Configure<SmtpConfiguration>(Configuration.GetSection(nameof(SmtpConfiguration)));
             services.Configure<JellyfinUserRepositoryConfiguration>(Configuration.GetSection(nameof(JellyfinUserRepositoryConfiguration)));
+            services.Configure<LiteDbConfiguration>(Configuration.GetSection(nameof(LiteDbConfiguration)));
 
             services.AddApplicationDependencies();
 
