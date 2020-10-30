@@ -8,7 +8,7 @@ namespace Lunitor.Notification.Web.Endpoints.Email
         public string Subject { get; set; }
         public string Body { get; set; }
 
-        public EmailTemplate Map()
+        public EmailTemplate MapToEmailTemplate()
         {
             return new EmailTemplate(Type, Subject, Body);
         }
