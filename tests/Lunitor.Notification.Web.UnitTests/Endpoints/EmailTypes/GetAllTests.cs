@@ -40,7 +40,7 @@ namespace Lunitor.Notification.Web.UnitTests.Endpoints.EmailTypes
 
             var result = response.Result as OkObjectResult;
             Assert.NotNull(result.Value);
-            Assert.IsType<EmailTypesResponse>(result.Value);
+            Assert.IsAssignableFrom<IEnumerable<EmailType>>(result.Value);
         }
 
         [Fact]
@@ -75,8 +75,8 @@ namespace Lunitor.Notification.Web.UnitTests.Endpoints.EmailTypes
             var response = await _getAll.HandleAsync();
 
             var result = response.Result as OkObjectResult;
-            var value = result.Value as EmailTypesResponse;
-            Assert.Equal(emailTypes.Length, value.EmailTypes.Length);
+            var value = result.Value as IEnumerable<EmailType>;
+            Assert.Equal(emailTypes.Length, value.Count());
         }
     }
 }

@@ -1,6 +1,6 @@
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from './';
-import { GetEmailTypesResponse, EmailTypeResponse } from '../models/GetEmailTypesResponse';
+import { EmailTypeResponse } from '../models/EmailTypeResponse';
 
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
@@ -96,10 +96,10 @@ export const actionCreators = {
             })
 
             fetch(`/api/getemailtypes`)
-                .then(response => response.json() as Promise<GetEmailTypesResponse>)
+                .then(response => response.json() as Promise<EmailTypeResponse[]>)
                 .then(data => {
 
-                    const emailTypes: EmailType[] = data.emailTypes.map((emailType: EmailTypeResponse) => {
+                    const emailTypes: EmailType[] = data.map((emailType: EmailTypeResponse) => {
                         return {
                             name: emailType.name,
                             tags: extractTags(emailType)
