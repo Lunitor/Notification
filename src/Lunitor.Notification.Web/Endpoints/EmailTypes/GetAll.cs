@@ -3,13 +3,14 @@ using Ardalis.GuardClauses;
 using Lunitor.Notification.Core.Repository;
 using Lunitor.Notification.Web.Model;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lunitor.Notification.Web.Endpoints.EmailTypes
 {
-    public class GetAll : BaseAsyncEndpoint<EmailTypesResponse>
+    public class GetAll : BaseAsyncEndpoint<IEnumerable<EmailType>>
     {
         private readonly IEmailFactoryTypeRepository _emailFactoryTypeRepository;
 
@@ -20,7 +21,7 @@ namespace Lunitor.Notification.Web.Endpoints.EmailTypes
         }
 
         [HttpGet("/api/getemailtypes")]
-        public override async Task<ActionResult<EmailTypesResponse>> HandleAsync(CancellationToken cancellationToken = default)
+        public override async Task<ActionResult<IEnumerable<EmailType>>> HandleAsync(CancellationToken cancellationToken = default)
         {
             var typeNames = _emailFactoryTypeRepository.GetAllNames();
             var emailTypes = typeNames.Select(name => new EmailType
@@ -29,10 +30,7 @@ namespace Lunitor.Notification.Web.Endpoints.EmailTypes
                 Placeholders = _emailFactoryTypeRepository.GetPlaceholders(name)
             });
 
-            return Ok(new EmailTypesResponse
-            {
-                EmailTypes = emailTypes.ToArray()
-            });
+            return Ok(emailTypes);
         }
     }
 }
