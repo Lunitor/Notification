@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 
 namespace Lunitor.Notification.Core.Model
 {
@@ -7,6 +6,6 @@ namespace Lunitor.Notification.Core.Model
     {
         public DateTime TimeStamp { get; set; }
         public EmailTemplate EmailTemplate { get; set; }
-        public ReadOnlyCollection<SendingResult> SendingResults { get; set; }
+        public SendingResult[] SendingResults { get; set; }
     }
 }

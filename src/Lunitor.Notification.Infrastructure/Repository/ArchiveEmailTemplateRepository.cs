@@ -40,13 +40,13 @@ namespace Lunitor.Notification.Infrastructure.Repository
             {
                 TimeStamp = _dateProvider.Now,
                 EmailTemplate = emailTemplate,
-                SendingResults = results.AsReadOnly()
+                SendingResults = results.ToArray()
             };
 
             var id = _database.GetCollection<ArchiveEmailTemplate>()
                 .Insert(archiveEmailTemplate);
 
-            _logger.LogInformation("Archived {entityname} with {id} id.", nameof(EmailTemplate), id.AsGuid);
+            _logger.LogInformation("Archived {entityname} with [{subject}] subject.", nameof(EmailTemplate), emailTemplate.Content.Subject);
         }
 
     }
