@@ -1,12 +1,12 @@
 ﻿using Lunitor.Notification.Core;
 using Lunitor.Notification.Core.Model;
+using Lunitor.Notification.Core.Repository;
 using Lunitor.Notification.Web.Endpoints.Email;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -18,25 +18,33 @@ namespace Lunitor.Notification.Web.UnitTests.Endpoints.Email
 
         private Mock<IEmailCreator> _emailCreatorMock;
         private Mock<IEmailSender> _emailSenderMock;
+        private Mock<IArchiveEmailTemplateRepository> _archiveRepositoryMock;
 
         public SendTests()
         {
             _emailCreatorMock = new Mock<IEmailCreator>();
             _emailSenderMock = new Mock<IEmailSender>();
+            _archiveRepositoryMock = new Mock<IArchiveEmailTemplateRepository>();
 
-            _send = new Send(_emailCreatorMock.Object, _emailSenderMock.Object);
+            _send = new Send(_emailCreatorMock.Object, _emailSenderMock.Object, _archiveRepositoryMock.Object);
         }
 
         [Fact]
         public void Constructor_ThrowsArgumentNullExcpetion_WhenEmailCreatorIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new Send(null, _emailSenderMock.Object));
+            Assert.Throws<ArgumentNullException>(() => new Send(null, _emailSenderMock.Object, _archiveRepositoryMock.Object));
         }
 
         [Fact]
         public void Constructor_ThrowsArgumentNullExcpetion_WhenEmailSenderIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new Send(_emailCreatorMock.Object, null));
+            Assert.Throws<ArgumentNullException>(() => new Send(_emailCreatorMock.Object, null, _archiveRepositoryMock.Object));
+        }
+
+        [Fact]
+        public void Constructor_ThrowsArgumentNullExcpetion_WhenArchiveEmailTemplateRepositoryIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => new Send(_emailCreatorMock.Object, _emailSenderMock.Object, null));
         }
 
         [Fact]
@@ -133,6 +141,18 @@ namespace Lunitor.Notification.Web.UnitTests.Endpoints.Email
             {
                 Assert.Equal(generatedEmails[i].ToAddress, sendEmailResponse.Results.ElementAt(i).EmailAddress);
             }
+        }
+
+        [Fact]
+        public async Task HandleAsync_CallsArchiveEmailTemplateRepositoryArchiveEmailTemplate()
+        {
+            var response = await _send.HandleAsync(new SendEmailRequest());
+
+            _archiveRepositoryMock.Verify(repository =>
+                repository.ArchiveEmailTemplate(
+                    It.IsAny<EmailTemplate>(),
+                    It.IsAny<List<SendingResult>>()),
+                Times.Once);
         }
     }
 }
