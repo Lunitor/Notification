@@ -37,6 +37,9 @@ namespace Lunitor.Notification.Infrastructure.UnitTests.Repository
             _liteDatabaseMock.Setup(database => database.GetCollection<ArchiveEmailTemplate>())
                 .Returns(_archiveLiteCollectionMock.Object);
 
+            _archiveLiteCollectionMock.Setup(collection => collection.Insert(It.IsAny<ArchiveEmailTemplate>()))
+                .Returns(new Guid());
+
             _archiveEmailTemplateRepository = new ArchiveEmailTemplateRepository(_liteDbContextMock.Object, _dateProviderStub.Object, _loggerMock.Object);
         }
 
@@ -125,7 +128,7 @@ namespace Lunitor.Notification.Infrastructure.UnitTests.Repository
                 {
                     archiveEmailTemplatesInDatabase.Add(entity);
 
-                    return 0;
+                    return new Guid();
                 });
 
             var emailTemplate = new EmailTemplate();
@@ -154,7 +157,7 @@ namespace Lunitor.Notification.Infrastructure.UnitTests.Repository
                 {
                     archiveEmailTemplatesInDatabase.Add(entity);
 
-                    return 0;
+                    return new Guid();
                 });
 
             // Act
