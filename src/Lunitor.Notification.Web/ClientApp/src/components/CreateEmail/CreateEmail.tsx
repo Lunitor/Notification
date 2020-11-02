@@ -10,6 +10,7 @@ import SelectEmailType from './SelectEmailType';
 import EmailBodyPreview from './EmailBodyPreview';
 import SubjectInput from './SubjectInput';
 import { CreateEmailRequest } from '../../models/CreateEmailRequest';
+import { StringHtml } from '../../utility/StringHtml';
 
 // At runtime, Redux will merge together...
 type CreateEmailProps =
@@ -84,7 +85,7 @@ class CreateEmail extends React.PureComponent<CreateEmailProps> {
         const requestPayload: CreateEmailRequest = {
             type: this.props.selectedEmailType.name,
             subject: this.props.emailSubject,
-            body: this.props.emailBody
+            body: StringHtml.replaceNewLineWithBrTag(this.props.emailBody)
         };
 
         const result = await fetch('/api/sendemail', {

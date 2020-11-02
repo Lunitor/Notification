@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { ApplicationState } from '../../store';
 import * as CreateEmailStore from '../../store/CreateEmail';
 import ReactHtmlParser from 'react-html-parser';
+import {StringHtml} from '../../utility/StringHtml';
 
 
 // At runtime, Redux will merge together...
@@ -14,7 +15,7 @@ type EmailBodyPreviewProps =
 class EmailBodyPreview extends React.PureComponent<EmailBodyPreviewProps> {
     public render() {
         return (
-            ReactHtmlParser(this.props.emailBody)
+            ReactHtmlParser(StringHtml.replaceNewLineWithBrTag(this.props.emailBody))
         );
     }
 }

@@ -114,7 +114,7 @@ namespace Lunitor.Notification.Infrastructure
                     message.Bcc.AddRange(email.BCCAddresses.Select(bcc => MailboxAddress.Parse(bcc)));
 
                 message.Subject = email.Subject;
-                message.Body = new TextPart(TextFormat.Plain)
+                message.Body = new TextPart(TextFormat.Html)
                 {
                     Text = email.Body
                 };
