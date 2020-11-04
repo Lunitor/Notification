@@ -22,14 +22,8 @@
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="ClientApp\src\utility\stringHtml.ts" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Lunitor.Notification.Core\Lunitor.Notification.Core.csproj" />
     <ProjectReference Include="..\Lunitor.Notification.Infrastructure\Lunitor.Notification.Infrastructure.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <TypeScriptCompile Include="ClientApp\src\utility\StringHtml.ts" />
   </ItemGroup>
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
